@@ -85,13 +85,12 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[The SprayList]{The SprayList:} % The short title appears at the bottom of every slide, the full title is only on the title page
-\subtitle{A Scalable Relaxed Priority Queue}
+\title[xx]{Metodo Spatio-temporal para la detección y registro de acciones humanas en video de poca resolucion. } % The short title appears at the bottom of every slide, the full title is only on the title page
+\subtitle{}
 
-\author[Autores]{Dan Alistarh\footnote{Microsoft Research}, Justin Kopinsky\footnote{MIT}, Jerry Li\footnote{MIT}, Nir Shavit\footnote{MIT and TAU} 
-\newline 
+\author[Autores]{
 \small{presented by} 
-\newline \normalsize {Gabriel Aparicio, Luigy Machaca, Luis Cáceres} }  % Your name
+\newline \normalsize {Luigy Machaca Arcana} }  % Your name
 \institute[UNSA] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
 Universidad Nacional de San Agustín\\ % Your institution for the title page
@@ -119,126 +118,300 @@ Universidad Nacional de San Agustín\\ % Your institution for the title page
 \section{Introduction}
 %------------------------------------------------
 
+
+
 \begin{frame}
 \frametitle{Introduction}
-High-performance concurrent priority queues are essential for applications
-such as task scheduling and discrete event simulation.
-Unfortunately, even the best performing implementations do not
-scale past a number of threads in the single digits.\\
+\begin{itemize}
+\item El reconocimiento de acciones humanas sobre vídeo - visión artificial, 
+\item Ha madurado lo suficiente.
+\item La comprensión de la imagen es una tarea de importancia primordial para una amplia gama de aplicaciones prácticas.
+\item un análisis de escena, que consiste en etiquetar cada píxel de la imagen con la categoría del objeto al que pertenece.
+\end{itemize}
+\end{frame}
 
-Starting from a nonblocking
-SkipList, the main innovation behind our design is that
-the DeleteMin operations avoid a sequential bottleneck by “spraying”
-themselves onto the head of the SkipList list in a coordinated
-fashion.
+
+\begin{frame}
+\frametitle{Introduction}
+\begin{itemize}
+\item Un ejemplo, es el artículo de Yan lecun (2013) "La comprensión de la imagen es una tarea de importancia primordial para una amplia gama de aplicaciones prácticas. Un paso importante para entender una imagen es realizar un etiquetado de escena completa, también conocido como un análisis de escena, que consiste en etiquetar cada píxel de la imagen con la categoría del objeto al que pertenece."
+\end{itemize}
+ \begin{figure}
+\includegraphics[width=0.8\linewidth]{img2/mccn.png}
+\end{figure}
 
 \end{frame}
+
+
+\begin{frame}
+\frametitle{Introduction}
+\begin{itemize}
+\item sparse techniques (Lucas-Kanade )
+
+\item  dense techniques process all the pixels ( Poppe (2010)  describe los principales enfoques existentes para etiquetar acciones humanas sobre secuencias de vídeo 
+)
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+\frametitle{Introduction}
+\begin{itemize}
+\item  dense techniques process all the pixels
+\end{itemize}
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{img2/Dense_optical_flow_by_HSV_color_image.png}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Introduction}
+\begin{itemize}
+\item  dense techniques process all the pixels
+\end{itemize}
+
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{img2/Dense_optical_flow_by_lines.png}
+\end{figure}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Introduction}
+\begin{itemize}
+\item Lucas-Kanade 
+\begin{figure}
+\includegraphics[width=0.8\linewidth]{img2/Lucas-Kanade_method.png}
+\end{figure}
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+\frametitle{Introduction}
+\begin{itemize}
+\item ¿Hay suficiente información spatio-temporal en un video para adquirir conocimiento sobre diferentes movimientos?
+\end{itemize}
+
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Introduccion}
-SkipLists are desirable because they allow priority queue insertions
-and removals without the costly percolation up a heap or
-the rebalancing of a search tree.\\
-The SprayList provides probabilistic guarantees
-on the relative priority of returned elements, and on the running
-time of operations. At the same time, it shows fully scalable
-throughput for up to 80 concurrent threads under high-contention
-workloads.
+¿Hasta qué punto nosotros podemos capturar, representar y codificar toda la información de un video a un bajo costo computacional en tiempo real?
 
 
-\end{frame}
-
-\begin{frame}
-\frametitle{Image}
 \begin{figure}
-\includegraphics[width=0.8\linewidth]{SL1}
+\includegraphics[width=0.8\linewidth]{img2/Selection_016.png}
 \end{figure}
+
 \end{frame}
+
 
 
 %------------------------------------------------
-\section{The SprayList Algorithm}
+\section{Porque los fenomenos spatio-temporal son tan importantes?
+}
 %------------------------------------------------
 
 \begin{frame}	
-\frametitle{The SprayList Algorithm}
-The data structure maintains an implementation of a set, defined by the bottom-level lock-free list. The SkipList is comprised of multiple levels,
-each of which is a linked list. Every node is inserted deterministically
-at the lowest level, and probabilistically at higher levels.\\
-A key idea
-in this design is that a node can be independently inserted at each
-level. A node is $present$ if it has been inserted into the bottom list;
-insertion at higher levels is useful to maintain logarithmic average
-search time.
+\frametitle{Porque los fenomenos spatio-temporal son tan importantes?
+}
 
-\end{frame}
-
-
-
-\subsection{Spraying and Deletion}
-
-\begin{frame}
-\frametitle{Spraying and Deletion}
-
-The goal of the Spray operation is to emulate a uniform choice
-among the $O(plog3
-p)$ highest-priority items. To perform a Spray,
-a process starts at the front of the SkipList, and at some initial
-height h. (See Figure 2 for an illustration.)
-
+\begin{itemize}
+\item debido a que en una secuencia de imagenes (video), tenemos toda la información en estos pixeles.
+\item tenemos una informacion especial en las distribuciones de los pixeles.
+\item temporal information: cada píxel de un frame está relacionado con algún pixel del siguiente frame
+\item si logramos relacionar estos píxeles, podremos por ejemplo: human action recognition
+ 
+\end{itemize}
 \begin{figure}
-\includegraphics[width=0.5\linewidth]{SL2}
+\includegraphics[width=0.4\linewidth]{img2/Selection_017.png}
 \end{figure}
 
 \end{frame}
 
 
-
 \begin{frame}
-\frametitle{Spraying and Deletion}
-Once on the bottom list, the process attempts to acquire the
-current node. If the node is successfully acquired, the thread starts the standard SkipList removal procedure, marking the node as logically deleted.\\
-
+\frametitle{¿Que podemos hacer con la computación visual?}
+ 
 \begin{itemize}
-\item Spray Parameters.- In particular, notice that we can vary the starting height, the distribution for jump lengths at each level, and how many levels to descend between jumps.
-\item Staring Height.-Each Spray starts at list level $H = log p + K$, for some constant $K^3$
-\item Jump Length Distribution.- $L=M log^3 p$ where M is a constant value.
-\item Level to Descend
-\item Node Removal
+\item \textbf{vision-based human recognition} es el proceso de etiquetado de secuencias de imágenes con etiquetas de acción.
+	 \begin{itemize}
+	 \item recognition, motion analysis, tracking, imagen registration
+ 
+	 \end{itemize}
+\item Es posible hacer aplicaciones de este tipo en tiempo real?
+	\begin{itemize}
+	\item ejemplo: puntajes en deportes
+	\item content based video retrieval: 
+		búsqueda de un video que contenta la misma información visual.
+ 
+	\end{itemize}
 \end{itemize}
+ 
+\begin{figure}
+\includegraphics[width=0.2\linewidth]{img2/dariawalk.jpg}
+\includegraphics[width=0.4\linewidth]{img2/download.jpg}
+ 
+\end{figure}
+ 
+\end{frame}
+ 
 
+
+ 
+\subsection{background}
+\begin{frame}
+\frametitle{¿Como obtenemos la información del video?}
+ 
+\begin{itemize}
+\item \textit{3d human body tracking with multiple cameras}
+    \begin{itemize}
+    \item En 3d, no puedes usar una solo cámara
+     \item tiene un alto costo computacional
+    \end{itemize}	
+    \begin{figure}
+    \includegraphics[width=0.4\linewidth]{img2/Selection_022.png} 
+    \end{figure}
+    
+\item stick figure model with a nonparametric bayesian distribution
+    \begin{itemize}
+    \item no necesita informacion previa de un modelos, refiriéndose al modelo de movimiento.
+    \end{itemize}
+
+     \begin{figure}
+     \includegraphics[width=0.4\linewidth]{img2/images.jpg} 
+    \end{figure}
+
+ \end{itemize}
+\end{frame}
+ 
+
+
+ 
+ 
+ 
+\begin{frame}
+\frametitle{¿Como obtenemos la información del video?}
+\begin{itemize}
+	\item \textit{Learning Hierarchical Features for Scene Labeling}
+    
+     \begin{figure}
+     \includegraphics[width=0.4\linewidth]{img2/download__1_.jpg} 
+    \end{figure}
+
+ 
+	
+
+\end{itemize}
+ 
+\end{frame}
+ 
+ 
+\section{algoritmo} 
+ 
+ 
+ 
+
+ 
+ 
+\begin{frame}
+\frametitle{¿Cuales son los problemas y las soluciones?}
+ 
+\begin{itemize}
+\item problema 1: atributos a gran escala del movimiento con los enfoques tradicionales.
+	\begin{itemize}
+      \item  nuevo enfoque spatio-temporal template (motion vector flow instance,MVFI)
+      \item  reducción de dimensionalidad.
+	\end{itemize}
+\item problema 2: cómo retener información de temporal-connection en múltiples clasificaciones.
+	\begin{itemize}
+	\item trayectoria spatio-temporal 
+	\item geometría de las curvas del spatio-temporal
+	\item comparación de las propiedades de las curvas en mismas acciones.
+ 
+	\end{itemize}
+\end{itemize}
+ 
+\end{frame}
+ 
+  
+ 
+
+\subsection{MVFI}
+ 
+\begin{frame}
+\frametitle{}
+ 
+\begin{itemize}
+\item spatio-temporal template (MVFI)
+  \begin{itemize}
+  \item dense optical flow: patrón de movimiento.
+  \item flujo del vector movimiento.
+  \item eigenvector: vectores que se fijan en dirección bajo una transformación lineal
+  \item informacion
+          \begin{itemize}
+          \item magnitud de velocidad
+          \item dirección de velocidad
+          \end{itemize}
+  \end{itemize}
+\end{itemize}
+  \begin{figure}
+     \includegraphics[width=0.8\linewidth]{img2/Selection_021.png} 
+    \end{figure}
+ 
 \end{frame}
 
-
-
-
-\subsection{Optimizations}
-
 \begin{frame}
-\frametitle{Optimizations}
+\frametitle{Clasificación (machine learning)}
 \begin{itemize}
-\item \textbf{Padding}.- A first practical observation is that, for small (constant)
-values of D, the Spray procedure above is biased against elements at the front of the list.
+\item Transformación un nuevo espacio para clasificarlos
+	\begin{itemize}
+      \item técnicas de reducción de dimensionalidad 
+      \item principal component analysis(PCA) combinado con linear discriminant analysis(LDA)
+	\end{itemize}
+\item classification (k-nearest neighbors )
 
-\item \textbf{Cleaner}.- Before each new Spray, each thread flips a low probability
-coin to decide whether it will become a cleaner thread.
-\item \textbf{Adapting to Contention}.- In particular, a thread can estimate p, increasing its estimate if it detects higher than expected contention (in the form of
-collisions) and decreasing its estimate if it detects low contention. 
 \end{itemize}
 \end{frame}
+ 
+
+\begin{frame}
+\begin{figure}
+ \includegraphics[width=0.8\linewidth]{img2/6-Figure2-1.png} 
+\end{figure}
+\end{frame}
+ 
+ 
 
 
 
 %------------------------------------------------
-\section{Conclusions}
+\section{Objetivos}
 %------------------------------------------------
 
 \begin{frame}
-\frametitle{Conclusions}
+\frametitle{Objetivos}
 \begin{itemize}
-\item I have presented the PH-Tree as an approach for combined storage and indexing of multi-dimensional data.
-
-\item In summary the combination of multi-dimensional indexing with space efficiency and good performance makes it a useful alternative for many applications.
+\item aplicar una cnn para etapa clasificacion.
+\item videos de baja resolucion. 
+\item  
 \end{itemize}
 \end{frame}
 
@@ -250,13 +423,20 @@ collisions) and decreasing its estimate if it detects low contention.
 \frametitle{References}
 \footnotesize{
 \begin{thebibliography}{99} 
-    \bibitem[Alistarh, 2015]{p1} Alistarh, Dan, et al.
-    \newblock "The SprayList: A scalable relaxed priority 						queue." 
-    \newblock \emph{ ACM SIGPLAN Notices 50.8 (2015): 11-20.}.
-    \bibitem[K. Fraser, 2004]{p2}K. Fraser .
-    \newblock "Practical lock-freedom." 
-    \newblock \emph{ PhD thesis, PhD thesis, Cambridge
-University Computer Laboratory, 2004}.
+    \bibitem[Alistarh, 2015]{p1} Gómez-Conde, Iván, and David N. Olivieri. "A KPCA spatio-temporal differential geometric trajectory cloud classifier for recognizing human actions in a CBVR system." Expert Systems with Applications 42.13 (2015): 5472-5490.
+    
+        \bibitem[K. Fraser, 2011]{p2}Gómez-Conde, Iván, et al. "Simple human gesture detection and recognition using a feature vector and a real-time histogram based algorithm." Journal of Signal and Information Processing 2.04 (2011): 279.
+        
+        \bibitem[Poppe,2010] {p3} Poppe, R. (2010). A survey on vision-based human action recognition. Image and vision computing, 28(6), 976-990.
+        
+        \bibitem[Yan LeCun,2013] {p4} Farabet, Clement, et al. "Learning hierarchical features for scene labeling." IEEE transactions on pattern analysis and machine intelligence 35.8 (2013): 1915-1929.
+        
+        
+        
+        
+        
+        
+    
 \end{thebibliography}
 }
 \end{frame}
